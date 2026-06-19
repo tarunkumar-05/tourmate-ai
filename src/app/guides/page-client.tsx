@@ -12,12 +12,37 @@ export default function GuidesClient({ initialGuides }: { initialGuides: any[] }
   const [searchQuery, setSearchQuery] = useState('');
   const guides = initialGuides;
 
-  const filteredGuides = guides.filter(guide => 
-    guide.profile?.firstName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    guide.profile?.lastName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    guide.profile?.location?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    guide.guideProfile?.university?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const [selectedLanguages, setSelectedLanguages] = useState<string[]>([]);
+  const [selectedRatings, setSelectedRatings] = useState<number[]>([]);
+
+  const toggleLanguage = (lang: string) => {
+    setSelectedLanguages(prev => 
+      prev.includes(lang) ? prev.filter(l => l !== lang) : [...prev, lang]
+    );
+  };
+
+  const toggleRating = (rating: number) => {
+    setSelectedRatings(prev => 
+      prev.includes(rating) ? prev.filter(r => r !== rating) : [...prev, rating]
+    );
+  };
+
+  const filteredGuides = guides.filter(guide => {
+    const matchesSearch = !searchQuery || (
+      guide.profile?.firstName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      guide.profile?.lastName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      guide.profile?.location?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      guide.guideProfile?.university?.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    const matchesLanguage = selectedLanguages.length === 0 || 
+      selectedLanguages.some(lang => guide.profile?.languages?.includes(lang));
+
+    const matchesRating = selectedRatings.length === 0 || 
+      selectedRatings.some(rating => (guide.guideProfile?.avgRating || 0) >= rating);
+
+    return matchesSearch && matchesLanguage && matchesRating;
+  });
 
   return (
     <div className="min-h-screen bg-surface pb-24">
@@ -60,7 +85,12 @@ export default function GuidesClient({ initialGuides }: { initialGuides: any[] }
                   <div className="space-y-2">
                     {['English', 'Hindi', 'Telugu', 'Kannada', 'Tamil'].map(lang => (
                       <label key={lang} className="flex items-center gap-3 cursor-pointer">
-                        <input type="checkbox" className="w-4 h-4 rounded text-primary border-gray-300 focus:ring-primary" />
+                        <input 
+                          type="checkbox" 
+                          checked={selectedLanguages.includes(lang)}
+                          onChange={() => toggleLanguage(lang)}
+                          className="w-4 h-4 rounded text-primary border-gray-300 focus:ring-primary" 
+                        />
                         <span className="text-sm text-gray-700">{lang}</span>
                       </label>
                     ))}
@@ -74,7 +104,12 @@ export default function GuidesClient({ initialGuides }: { initialGuides: any[] }
                   <div className="space-y-2">
                     {[4, 3].map(rating => (
                       <label key={rating} className="flex items-center gap-3 cursor-pointer">
-                        <input type="checkbox" className="w-4 h-4 rounded text-primary border-gray-300 focus:ring-primary" />
+                        <input 
+                          type="checkbox" 
+                          checked={selectedRatings.includes(rating)}
+                          onChange={() => toggleRating(rating)}
+                          className="w-4 h-4 rounded text-primary border-gray-300 focus:ring-primary" 
+                        />
                         <span className="text-sm text-gray-700 flex items-center gap-1">{rating}+ <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" /></span>
                       </label>
                     ))}
