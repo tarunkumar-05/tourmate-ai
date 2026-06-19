@@ -94,8 +94,8 @@ export async function createExperience(data: {
     revalidatePath('/dashboard/guide/experiences');
     revalidateTag('experiences_all', 'default');
     return { success: true };
-  } catch (error) {
+  } catch (error: any) {
     console.error('Failed to create experience:', error);
-    return { success: false, error: 'Database error' };
+    return { success: false, error: error?.message || 'Database error' };
   }
 }

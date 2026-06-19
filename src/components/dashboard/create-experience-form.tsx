@@ -38,11 +38,30 @@ export function CreateExperienceForm({ destinations }: { destinations: any[] }) 
     e.preventDefault();
     setError('');
 
+    // Form Validation
+    if (formData.title.length < 5) {
+      setError('Tour Title must be at least 5 characters long. Please enter relatable data.');
+      return;
+    }
+    if (formData.description.length < 20) {
+      setError('Description must be at least 20 characters long. Please provide meaningful details.');
+      return;
+    }
+    if (formData.meetingPoint.length < 5) {
+      setError('Meeting point is too short. Please provide a clear, valid location.');
+      return;
+    }
+    const durationNum = parseInt(formData.duration, 10);
+    if (durationNum <= 0 || durationNum > 48) {
+      setError('Please enter a valid duration (e.g., between 1 and 48 hours).');
+      return;
+    }
+
     startTransition(async () => {
       const res = await createExperience({
         ...formData,
         pricePerPerson: parseFloat(formData.pricePerPerson),
-        duration: parseInt(formData.duration, 10),
+        duration: durationNum,
         maxGroupSize: parseInt(formData.maxGroupSize, 10),
       });
 
