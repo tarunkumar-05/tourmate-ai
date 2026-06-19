@@ -85,30 +85,33 @@ async function TouristDashboardContent({ userId }: { userId: string }) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {upcomingTrip ? (
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
-            <div className="h-32 relative">
-              <Image 
-                src={upcomingTrip.experience.destination.coverImage} 
-                alt="Destination" 
-                fill 
-                className="object-cover"
-                unoptimized
-              />
+            <div className="h-32 relative bg-primary/20 flex items-center justify-center">
+              {upcomingTrip.experience?.destination?.coverImage ? (
+                <Image 
+                  src={upcomingTrip.experience.destination.coverImage} 
+                  alt="Destination" 
+                  fill 
+                  className="object-cover"
+                  unoptimized
+                />
+              ) : (
+                <MapPin className="w-12 h-12 text-primary opacity-50" />
+              )}
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
               <div className="absolute bottom-4 left-4 text-white">
                 <span className="bg-green-500 text-xs font-bold px-2 py-1 rounded-md mb-2 inline-block">UPCOMING TRIP</span>
-                <h3 className="font-heading font-bold text-xl">{upcomingTrip.experience.title}</h3>
+                <h3 className="font-heading font-bold text-xl">{upcomingTrip.experience?.title || `Guide Booking: ${(upcomingTrip as any).guide?.name || 'Local Guide'}`}</h3>
               </div>
             </div>
-            <div className="p-5 flex-1 flex flex-col justify-between">
+            <div className="p-6 flex-1 flex flex-col justify-between">
               <div>
-                <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
-                  <Calendar className="w-4 h-4 text-primary" />
-                  <span>{new Date(upcomingTrip.startDate).toLocaleDateString()}</span>
+                <div className="flex items-center gap-4 text-sm text-gray-500 mb-4">
+                  <span className="flex items-center gap-1"><Calendar className="w-4 h-4" /> {new Date(upcomingTrip.startDate).toLocaleDateString()}</span>
+                  <span className="flex items-center gap-1"><MapPin className="w-4 h-4" /> {upcomingTrip.experience?.destination?.name || 'Local Tour'}</span>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <MapPin className="w-4 h-4 text-primary" />
-                  <span>{upcomingTrip.experience.destination.name}, {upcomingTrip.experience.destination.state}</span>
-                </div>
+                <p className="text-gray-600 line-clamp-2 text-sm">
+                  {upcomingTrip.experience?.description || 'Get ready for your personalized tour with your verified local student guide.'}
+                </p>
               </div>
               <div className="mt-4 pt-4 border-t border-gray-100 flex gap-2">
                 <Link href="#" className="flex-1 text-center py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg text-sm transition-colors">
