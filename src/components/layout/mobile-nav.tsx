@@ -36,7 +36,7 @@ export function MobileNav() {
     { icon: Home, label: 'Home', href: '/' },
     { icon: Compass, label: 'Discover', href: '/discover' },
     { icon: Sparkles, label: 'AI Chat', href: '/ai-assistant', isAction: true },
-    { icon: Calendar, label: 'Bookings', href: user ? `/dashboard/${(user as any).role?.toLowerCase() || 'tourist'}/bookings` : '/auth/login' },
+    { icon: Calendar, label: 'Bookings', href: user ? ((user as any).role?.toLowerCase() === 'guide' ? '/dashboard/guide/bookings' : '/dashboard/tourist/trips') : '/auth/login' },
     { icon: User, label: 'Profile', href: user ? `/dashboard/${(user as any).role?.toLowerCase() || 'tourist'}` : '/auth/login' },
   ];
 
