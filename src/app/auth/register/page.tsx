@@ -23,8 +23,10 @@ export default function RegisterPage() {
     phone: '',
     password: '',
     university: '',
-    studentId: ''
+    studentId: '',
+    languages: ''
   });
+  const [idCardFile, setIdCardFile] = useState<File | null>(null);
   const [error, setError] = useState('');
   const [isPending, setIsPending] = useState(false);
   
@@ -280,24 +282,48 @@ export default function RegisterPage() {
                   
                   <div className="space-y-1">
                     <label className="text-sm font-medium text-gray-700">Upload Student ID Card</label>
-                    <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
-                      <div className="space-y-1 text-center">
-                        <svg className="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
-                          <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                        <div className="flex text-sm text-gray-600 justify-center">
-                          <span className="relative cursor-pointer bg-white rounded-md font-medium text-primary hover:text-primary-600 focus-within:outline-none">
-                            Upload a file
-                          </span>
-                        </div>
-                        <p className="text-xs text-gray-500">PNG, JPG up to 10MB</p>
+                    <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:bg-gray-50 transition-colors relative">
+                      <input 
+                        type="file" 
+                        accept="image/png, image/jpeg" 
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                        onChange={(e) => {
+                          if (e.target.files && e.target.files[0]) {
+                            setIdCardFile(e.target.files[0]);
+                          }
+                        }}
+                      />
+                      <div className="space-y-1 text-center relative z-0">
+                        {idCardFile ? (
+                          <>
+                            <CheckCircle2 className="mx-auto h-12 w-12 text-green-500" />
+                            <div className="flex text-sm text-gray-600 justify-center mt-2">
+                              <span className="font-medium text-green-600">
+                                {idCardFile.name}
+                              </span>
+                            </div>
+                            <p className="text-xs text-gray-500">File selected successfully</p>
+                          </>
+                        ) : (
+                          <>
+                            <svg className="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
+                              <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                            <div className="flex text-sm text-gray-600 justify-center">
+                              <span className="relative cursor-pointer bg-white rounded-md font-medium text-primary hover:text-primary-600 focus-within:outline-none">
+                                Upload a file
+                              </span>
+                            </div>
+                            <p className="text-xs text-gray-500">PNG, JPG up to 10MB</p>
+                          </>
+                        )}
                       </div>
                     </div>
                   </div>
 
                   <div className="space-y-1">
                     <label className="text-sm font-medium text-gray-700">Languages Spoken</label>
-                    <input type="text" placeholder="e.g. English, Hindi, Telugu" className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all" />
+                    <input type="text" value={formData.languages} onChange={e => setFormData({...formData, languages: e.target.value})} placeholder="e.g. English, Hindi, Telugu" className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all" />
                   </div>
 
                   <button disabled={isPending} type="submit" className="w-full py-3 px-4 bg-primary text-white font-bold rounded-lg hover:bg-primary-600 transition-colors mt-6 shadow-sm shadow-primary/30 disabled:opacity-50">
