@@ -96,6 +96,6 @@ export async function createExperience(data: {
     return { success: true };
   } catch (error: any) {
     console.error('Failed to create experience:', error);
-    return { success: false, error: error?.message || 'Database error' };
+    return { success: false, error: 'Database error: Could not save experience. Please check your inputs.' };
   }
 }

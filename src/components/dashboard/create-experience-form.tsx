@@ -17,21 +17,21 @@ export function CreateExperienceForm({ destinations }: { destinations: any[] }) 
     pricePerPerson: '',
     duration: '',
     maxGroupSize: '',
-    category: 'cultural' as DestinationCategory,
+    category: 'CULTURAL' as DestinationCategory,
     destinationId: '',
     meetingPoint: ''
   });
 
   const categories = [
-    { value: 'cultural', label: 'Cultural' },
-    { value: 'heritage', label: 'Heritage' },
-    { value: 'eco', label: 'Eco Tourism' },
-    { value: 'village', label: 'Village Tourism' },
-    { value: 'food', label: 'Food & Culinary' },
-    { value: 'adventure', label: 'Adventure' },
-    { value: 'religious', label: 'Religious & Spiritual' },
-    { value: 'family', label: 'Family Friendly' },
-    { value: 'hidden_gem', label: 'Hidden Gem' }
+    { value: 'CULTURAL', label: 'Cultural' },
+    { value: 'HERITAGE', label: 'Heritage' },
+    { value: 'ECO', label: 'Eco Tourism' },
+    { value: 'VILLAGE', label: 'Village Tourism' },
+    { value: 'FOOD', label: 'Food & Culinary' },
+    { value: 'ADVENTURE', label: 'Adventure' },
+    { value: 'RELIGIOUS', label: 'Religious & Spiritual' },
+    { value: 'FAMILY', label: 'Family Friendly' },
+    { value: 'HIDDEN_GEM', label: 'Hidden Gem' }
   ];
 
   const handleSubmit = (e: React.FormEvent) => {
