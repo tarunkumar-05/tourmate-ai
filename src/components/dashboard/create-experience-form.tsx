@@ -17,12 +17,22 @@ export function CreateExperienceForm({ destinations }: { destinations: any[] }) 
     pricePerPerson: '',
     duration: '',
     maxGroupSize: '',
-    category: 'CULTURAL' as DestinationCategory,
+    category: 'cultural' as DestinationCategory,
     destinationId: '',
     meetingPoint: ''
   });
 
-  const categories = ['CULTURAL', 'NATURE', 'ADVENTURE', 'SPIRITUAL', 'CULINARY', 'URBAN'];
+  const categories = [
+    { value: 'cultural', label: 'Cultural' },
+    { value: 'heritage', label: 'Heritage' },
+    { value: 'eco', label: 'Eco Tourism' },
+    { value: 'village', label: 'Village Tourism' },
+    { value: 'food', label: 'Food & Culinary' },
+    { value: 'adventure', label: 'Adventure' },
+    { value: 'religious', label: 'Religious & Spiritual' },
+    { value: 'family', label: 'Family Friendly' },
+    { value: 'hidden_gem', label: 'Hidden Gem' }
+  ];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,7 +80,7 @@ export function CreateExperienceForm({ destinations }: { destinations: any[] }) 
             className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
           >
             {categories.map(cat => (
-              <option key={cat} value={cat}>{cat}</option>
+              <option key={cat.value} value={cat.value}>{cat.label}</option>
             ))}
           </select>
         </div>
