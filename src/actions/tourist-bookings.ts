@@ -29,7 +29,7 @@ export async function createBooking(formData: FormData) {
       data: {
         touristId: session.user.id,
         guideId: guideId,
-        experienceId: experienceId,
+        experienceId: experienceId || null,
         groupSize: touristsCount,
         totalAmount: totalPrice,
         platformFee: totalPrice * 0.2,

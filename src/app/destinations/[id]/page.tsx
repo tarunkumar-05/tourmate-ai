@@ -167,13 +167,15 @@ export default async function DestinationDetailPage({ params }: PageProps) {
                     <Link key={guide.id} href={`/guides/${guide.id}`} className="bg-white rounded-2xl border border-gray-100 p-4 shadow-sm hover:shadow-md transition-shadow flex items-center gap-4">
                       <div className="relative w-16 h-16 rounded-full overflow-hidden shrink-0 bg-gray-200">
                         {(guide.avatarUrl || guide.image) ? (
-                          <Image src={guide.avatarUrl || guide.image || ''} alt={guide.profile?.firstName || ''} fill className="object-cover" unoptimized />
+                          <Image src={guide.avatarUrl || guide.image || ''} alt={guide.profile?.firstName || guide.name || ''} fill className="object-cover" unoptimized />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center text-primary font-bold">{guide.profile?.firstName?.charAt(0)}</div>
+                          <div className="w-full h-full flex items-center justify-center text-primary font-bold text-2xl uppercase">
+                            {(guide.profile?.firstName || guide.name || '?').charAt(0)}
+                          </div>
                         )}
                       </div>
                       <div>
-                        <h4 className="font-bold text-gray-900">{guide.profile?.firstName} {guide.profile?.lastName}</h4>
+                        <h4 className="font-bold text-gray-900">{guide.profile?.firstName || guide.name?.split(' ')[0]} {guide.profile?.lastName || (guide.name?.includes(' ') ? guide.name.split(' ')[1] : '')}</h4>
                         <p className="text-xs text-gray-500 mb-1">{guide.guideProfile?.university}</p>
                         <div className="flex items-center gap-2 text-sm">
                           <span className="flex items-center text-yellow-600 font-bold"><Star className="w-3 h-3 fill-yellow-400 mr-1" /> {guide.guideProfile?.avgRating || 0}</span>

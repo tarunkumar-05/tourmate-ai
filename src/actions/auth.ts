@@ -25,6 +25,13 @@ export async function registerUser(data: any) {
         phone: data.phone,
         passwordHash,
         role: data.role.toUpperCase(),
+        profile: {
+          create: {
+            firstName: data.firstName || '',
+            lastName: data.lastName || '',
+            languages: data.languages ? data.languages.split(',').map((l:string) => l.trim()) : [],
+          }
+        }
       }
     });
 

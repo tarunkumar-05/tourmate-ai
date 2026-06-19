@@ -6,6 +6,7 @@ import { getGuideById } from '@/lib/data/guides';
 import { prisma } from '@/lib/prisma';
 import { CATEGORY_META } from '@/types';
 import { mockExperiences, mockReviews } from '@/lib/mock-data';
+import { createBooking } from '@/actions/tourist-bookings';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -55,13 +56,13 @@ export default async function GuideProfilePage({ params }: PageProps) {
                   <div className="flex justify-between items-start">
                     <div>
                       <h1 className="text-3xl font-heading font-extrabold text-gray-900 flex items-center gap-2">
-                        {guide.profile.firstName} {guide.profile.lastName}
+                        {guide.profile?.firstName || guide.name?.split(' ')[0]} {guide.profile?.lastName || (guide.name?.includes(' ') ? guide.name.split(' ')[1] : '')}
                         {guide.guideProfile.verified && (
                           <ShieldCheck className="w-6 h-6 text-primary" />
                         )}
                       </h1>
                       <div className="flex items-center gap-2 text-gray-500 mt-1 mb-4 font-medium">
-                        <MapPin className="w-4 h-4" /> {guide.profile?.location}
+                        <MapPin className="w-4 h-4" /> {guide.profile?.location || 'Location Not Provided'}
                       </div>
                     </div>
                     <div className="hidden sm:flex gap-3">
@@ -174,9 +175,14 @@ export default async function GuideProfilePage({ params }: PageProps) {
                 </div>
               </div>
 
-              <button className="w-full bg-primary text-white font-bold py-4 rounded-xl hover:bg-primary-600 transition-colors shadow-lg shadow-primary/20 mb-4 flex items-center justify-center gap-2">
-                <CalendarIcon className="w-5 h-5" /> Request Booking
-              </button>
+              <form action={createBooking}>
+                <input type="hidden" name="guideId" value={guide.id} />
+                <input type="hidden" name="price" value={guide.guideProfile.pricePerHour || 100} />
+                <input type="hidden" name="guests" value="1" />
+                <button type="submit" className="w-full bg-primary text-white font-bold py-4 rounded-xl hover:bg-primary-600 transition-colors shadow-lg shadow-primary/20 mb-4 flex items-center justify-center gap-2">
+                  <CalendarIcon className="w-5 h-5" /> Request Booking
+                </button>
+              </form>
               
               <button className="w-full bg-gray-50 text-gray-700 border border-gray-200 font-bold py-4 rounded-xl hover:bg-gray-100 transition-colors flex items-center justify-center gap-2">
                 <MessageCircle className="w-5 h-5" /> Message Guide
