@@ -174,6 +174,11 @@ export function Navbar() {
                   </AnimatePresence>
                 </div>
               </div>
+            ) : status === 'loading' ? (
+              <div className="hidden lg:flex items-center gap-3">
+                <div className="w-16 h-8 bg-gray-100 animate-pulse rounded-md"></div>
+                <div className="w-20 h-8 bg-gray-100 animate-pulse rounded-full"></div>
+              </div>
             ) : (
               <div className="hidden lg:flex items-center gap-3">
                 <Link
@@ -229,7 +234,7 @@ export function Navbar() {
                 ))}
               </nav>
               
-              {!isAuthenticated && (
+              {!isAuthenticated && status !== 'loading' && (
                 <div className="flex flex-col gap-2 pt-4 border-t border-gray-100">
                   <Link
                     href="/auth/login"
