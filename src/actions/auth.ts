@@ -3,6 +3,7 @@
 import { signIn, signOut } from '@/auth';
 import { AuthError } from 'next-auth';
 import bcrypt from 'bcryptjs';
+import nodemailer from 'nodemailer';
 import { prisma } from '@/lib/prisma';
 import { revalidateTag } from 'next/cache';
 
@@ -79,7 +80,8 @@ export async function logout() {
 
 export async function loginWithGoogle() {
   revalidatePath('/', 'layout');
-import nodemailer from 'nodemailer';
+  await signIn('google', { redirectTo: '/dashboard' });
+}
 
 // Configure Nodemailer for Gmail
 const transporter = nodemailer.createTransport({
