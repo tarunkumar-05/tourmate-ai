@@ -79,12 +79,16 @@ export async function logout() {
 
 export async function loginWithGoogle() {
   revalidatePath('/', 'layout');
-  await signIn('google', { redirectTo: '/dashboard' });
-}
+import nodemailer from 'nodemailer';
 
-import { Resend } from 'resend';
-
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Configure Nodemailer for Gmail
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USER, // Your Gmail address
+    pass: process.env.EMAIL_APP_PASSWORD // Your Gmail App Password
+  }
+});
 
 export async function requestPasswordReset(email: string) {
   try {
@@ -106,41 +110,41 @@ export async function requestPasswordReset(email: string) {
 
     const resetLink = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/auth/reset-password?token=${token}`;
 
-    // Send real email using Resend
-    if (process.env.RESEND_API_KEY) {
-      const { data, error } = await resend.emails.send({
-        from: 'onboarding@resend.dev', // Default testing domain for free tier
-        to: email, // Note: On free tier without verified domain, this only sends to your Resend account email!
-        subject: 'Reset your TourMate AI password',
-        html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2>Reset Your Password</h2>
-            <p>Hi ${user.name || 'there'},</p>
-            <p>Someone requested a password reset for your TourMate AI account. If this was you, click the button below to set a new password:</p>
-            <div style="margin: 30px 0;">
-              <a href="${resetLink}" style="background-color: #10b981; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">Reset Password</a>
+    // Send real email using Nodemailer & Gmail
+    if (process.env.EMAIL_USER && process.env.EMAIL_APP_PASSWORD) {
+      try {
+        await transporter.sendMail({
+          from: `"TourMate AI" <${process.env.EMAIL_USER}>`,
+          to: email, // This will now send to ANY email address!
+          subject: 'Reset your TourMate AI password',
+          html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+              <h2>Reset Your Password</h2>
+              <p>Hi ${user.name || 'there'},</p>
+              <p>Someone requested a password reset for your TourMate AI account. If this was you, click the button below to set a new password:</p>
+              <div style="margin: 30px 0;">
+                <a href="${resetLink}" style="background-color: #10b981; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">Reset Password</a>
+              </div>
+              <p>Or copy and paste this link into your browser:</p>
+              <p><a href="${resetLink}">${resetLink}</a></p>
+              <p>This link will expire in 1 hour.</p>
+              <p>If you didn't request this, you can safely ignore this email.</p>
             </div>
-            <p>Or copy and paste this link into your browser:</p>
-            <p><a href="${resetLink}">${resetLink}</a></p>
-            <p>This link will expire in 1 hour.</p>
-            <p>If you didn't request this, you can safely ignore this email.</p>
-          </div>
-        `
-      });
-
-      if (error) {
-        console.error('Resend API Error:', error);
-        return { success: false, error: `Email failed to send: ${error.message}` };
+          `
+        });
+      } catch (emailError: any) {
+        console.error('Nodemailer Error:', emailError);
+        return { success: false, error: `Email failed to send: ${emailError.message}` };
       }
     } else {
-      console.warn('RESEND_API_KEY is not set. Email not sent. Reset link:', resetLink);
-      return { success: false, error: 'Server configuration error: Email service is not set up.' };
+      console.warn('EMAIL_USER or EMAIL_APP_PASSWORD is not set. Email not sent. Reset link:', resetLink);
+      return { success: false, error: 'Server configuration error: Gmail service is not set up in Vercel.' };
     }
 
     return { success: true };
   } catch (error) {
     console.error('Password reset error:', error);
-    return { success: false, error: 'Failed to send reset email. Please try again later.' };
+    return { success: false, error: 'Failed to generate reset link. Please try again later.' };
   }
 }
 
