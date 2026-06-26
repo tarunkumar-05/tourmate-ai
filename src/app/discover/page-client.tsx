@@ -17,14 +17,19 @@ export default function DiscoverClient({ initialDestinations }: { initialDestina
   const categories: (DestinationCategory | 'all')[] = ['all', 'hidden_gem', 'heritage', 'eco', 'village', 'food', 'adventure', 'religious', 'cultural', 'family'];
 
   const filteredDestinations = initialDestinations.filter(dest => {
-    const destCategories = (dest.categories || []).map((c: string) => c.toLowerCase());
-    const matchesCategory = activeCategory === 'all' || destCategories.includes(activeCategory as string);
-    const matchesSearch = dest.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          dest.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    // Normalize to lowercase to handle both DB (UPPERCASE) and mock data (lowercase)
+    const destCategories = (dest.categories || []).map((c: string) => c.toLowerCase().replace('_', '_'));
+    const matchesCategory = activeCategory === 'all' || destCategories.includes(activeCategory.toLowerCase());
+    const matchesSearch = !searchQuery || 
+                          dest.name?.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          dest.city?.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           dest.state?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          dest.tags?.some((t: string) => t.toLowerCase().includes(searchQuery.toLowerCase()));
+                          (dest.tags || []).some((t: string) => t.toLowerCase().includes(searchQuery.toLowerCase()));
     return matchesCategory && matchesSearch;
   });
+
+  // Debug: log category info
+  // console.log('Active:', activeCategory, '| Sample categories:', initialDestinations[0]?.categories);
 
   return (
     <div className="min-h-screen bg-surface pb-24">

@@ -12,7 +12,7 @@ export const getDestinations = unstable_cache(
           reviews: true
         }
       }).catch(() => mockDestinations),
-      3000,
+      8000,
       mockDestinations
     );
   },
