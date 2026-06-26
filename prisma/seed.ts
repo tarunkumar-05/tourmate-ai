@@ -69,34 +69,35 @@ async function main() {
   // 2. Seed Destinations
   console.log('Seeding destinations...');
   for (const dest of mockDestinations) {
+    const data = {
+      id: dest.id,
+      name: dest.name,
+      slug: dest.slug,
+      description: dest.description,
+      shortDesc: dest.shortDesc,
+      coverImage: dest.coverImage,
+      images: dest.images,
+      latitude: dest.latitude,
+      longitude: dest.longitude,
+      address: dest.address,
+      city: dest.city,
+      state: dest.state,
+      country: dest.country,
+      bestSeason: dest.bestSeason,
+      avgBudget: dest.avgBudget,
+      difficulty: dest.difficulty,
+      tags: dest.tags,
+      categories: dest.categories.map(c => c.toUpperCase() as DestinationCategory),
+      featured: dest.featured,
+      published: dest.published,
+      avgRating: dest.avgRating,
+      totalReviews: dest.totalReviews,
+      viewCount: dest.viewCount,
+    };
     await prisma.destination.upsert({
       where: { slug: dest.slug },
-      update: {},
-      create: {
-        id: dest.id,
-        name: dest.name,
-        slug: dest.slug,
-        description: dest.description,
-        shortDesc: dest.shortDesc,
-        coverImage: dest.coverImage,
-        images: dest.images,
-        latitude: dest.latitude,
-        longitude: dest.longitude,
-        address: dest.address,
-        city: dest.city,
-        state: dest.state,
-        country: dest.country,
-        bestSeason: dest.bestSeason,
-        avgBudget: dest.avgBudget,
-        difficulty: dest.difficulty,
-        tags: dest.tags,
-        categories: dest.categories.map(c => c.toUpperCase() as DestinationCategory),
-        featured: dest.featured,
-        published: dest.published,
-        avgRating: dest.avgRating,
-        totalReviews: dest.totalReviews,
-        viewCount: dest.viewCount,
-      }
+      update: data,
+      create: data,
     });
   }
 
