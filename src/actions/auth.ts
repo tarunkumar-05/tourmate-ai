@@ -57,6 +57,7 @@ export async function registerUser(data: any) {
 
 export async function login(prevState: any, formData: FormData) {
   try {
+    revalidatePath('/', 'layout');
     await signIn('credentials', Object.fromEntries(formData));
   } catch (error) {
     if (error instanceof AuthError) {
@@ -72,10 +73,12 @@ export async function login(prevState: any, formData: FormData) {
 }
 
 export async function logout() {
+  revalidatePath('/', 'layout');
   await signOut({ redirectTo: '/' });
 }
 
 export async function loginWithGoogle() {
+  revalidatePath('/', 'layout');
   await signIn('google', { redirectTo: '/dashboard' });
 }
 
