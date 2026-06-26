@@ -109,8 +109,8 @@ export async function requestPasswordReset(email: string) {
     // Send real email using Resend
     if (process.env.RESEND_API_KEY) {
       await resend.emails.send({
-        from: 'TourMate AI <noreply@tourmate-ai.com>', // Use your verified Resend domain here in production
-        to: email,
+        from: 'onboarding@resend.dev', // Default testing domain for free tier
+        to: email, // Note: On free tier without verified domain, this only sends to your Resend account email!
         subject: 'Reset your TourMate AI password',
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
