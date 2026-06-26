@@ -35,6 +35,6 @@ export const getGuideById = async (id: string) => {
       }
     },
     [`guide_${id}`],
-    { revalidate: 3600 }
+    { revalidate: 3600, tags: [`guide_${id}`] }
   )();
 };
