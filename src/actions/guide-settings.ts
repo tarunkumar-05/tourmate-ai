@@ -32,3 +32,24 @@ export async function updateGuideProfile(data: {
     return { success: false, error: 'Failed to update profile' };
   }
 }
+
+export async function uploadProfilePicture(base64Image: string) {
+  const session = await auth();
+  if (!session?.user?.id) return { success: false, error: 'Unauthorized' };
+
+  try {
+    await prisma.user.update({
+      where: { id: session.user.id },
+      data: {
+        image: base64Image,
+      }
+    });
+
+    revalidatePath('/dashboard/guide/settings');
+    revalidatePath('/'); // Revalidate root to refresh layout
+    return { success: true };
+  } catch (error) {
+    console.error('Failed to upload profile picture:', error);
+    return { success: false, error: 'Failed to upload profile picture' };
+  }
+}

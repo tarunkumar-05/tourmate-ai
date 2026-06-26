@@ -34,7 +34,8 @@ export default async function GuideSettingsPage() {
               university: guideProfile.university,
               studentId: guideProfile.studentId,
               pricePerHour: guideProfile.pricePerHour,
-              pricePerDay: guideProfile.pricePerDay
+              pricePerDay: guideProfile.pricePerDay,
+              image: guideProfile.user.image,
             }} 
           />
         </div>
