@@ -82,6 +82,10 @@ export async function loginWithGoogle() {
   await signIn('google', { redirectTo: '/dashboard' });
 }
 
+import { Resend } from 'resend';
+
+const resend = new Resend(process.env.RESEND_API_KEY);
+
 export async function requestPasswordReset(email: string) {
   try {
     const user = await prisma.user.findUnique({ where: { email } });
@@ -90,7 +94,7 @@ export async function requestPasswordReset(email: string) {
     // Delete old tokens for this email
     await prisma.passwordResetToken.deleteMany({ where: { email } });
 
-    // Generate token (simple random string for demo)
+    // Generate token
     const token = Array.from({ length: 32 }, () => Math.random().toString(36).substring(2)).join('').substring(0, 32);
     
     // Set expiration 1 hour from now
@@ -100,12 +104,37 @@ export async function requestPasswordReset(email: string) {
       data: { email, token, expires }
     });
 
-    // In a real app, send an email here. 
-    // For this demo MVP, we will just return the token to the UI so it can auto-redirect!
-    return { success: true, mockTokenForDemo: token };
+    const resetLink = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/auth/reset-password?token=${token}`;
+
+    // Send real email using Resend
+    if (process.env.RESEND_API_KEY) {
+      await resend.emails.send({
+        from: 'TourMate AI <noreply@tourmate-ai.com>', // Use your verified Resend domain here in production
+        to: email,
+        subject: 'Reset your TourMate AI password',
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2>Reset Your Password</h2>
+            <p>Hi ${user.name || 'there'},</p>
+            <p>Someone requested a password reset for your TourMate AI account. If this was you, click the button below to set a new password:</p>
+            <div style="margin: 30px 0;">
+              <a href="${resetLink}" style="background-color: #10b981; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">Reset Password</a>
+            </div>
+            <p>Or copy and paste this link into your browser:</p>
+            <p><a href="${resetLink}">${resetLink}</a></p>
+            <p>This link will expire in 1 hour.</p>
+            <p>If you didn't request this, you can safely ignore this email.</p>
+          </div>
+        `
+      });
+    } else {
+      console.warn('RESEND_API_KEY is not set. Email not sent. Reset link:', resetLink);
+    }
+
+    return { success: true };
   } catch (error) {
     console.error('Password reset error:', error);
-    return { success: false, error: 'Something went wrong' };
+    return { success: false, error: 'Failed to send reset email. Please try again later.' };
   }
 }
 

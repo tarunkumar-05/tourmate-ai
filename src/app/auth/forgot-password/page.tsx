@@ -25,14 +25,7 @@ export default function ForgotPasswordPage() {
       setIsPending(false);
     } else {
       setSuccess(true);
-      // For demo purposes, we redirect instantly with the mock token
-      if (res.mockTokenForDemo) {
-        setTimeout(() => {
-          router.push(`/auth/reset-password?token=${res.mockTokenForDemo}`);
-        }, 1500);
-      } else {
-        setIsPending(false);
-      }
+      setIsPending(false);
     }
   };
 
@@ -51,11 +44,14 @@ export default function ForgotPasswordPage() {
             {success ? (
               <div className="text-center py-4">
                 <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto mb-4" />
-                <h3 className="text-lg font-bold text-gray-900 mb-2">Reset Link Sent!</h3>
-                <p className="text-sm text-gray-500 mb-4">
-                  (Demo Mode: Redirecting you to the secure reset page now...)
+                <h3 className="text-lg font-bold text-gray-900 mb-2">Check your email</h3>
+                <p className="text-sm text-gray-500 mb-6">
+                  We have sent a password reset link to <br/>
+                  <span className="font-medium text-gray-900">{email}</span>
                 </p>
-                <Loader2 className="w-6 h-6 animate-spin text-primary mx-auto" />
+                <Link href="/auth/login" className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-600 transition-colors">
+                  Return to Login
+                </Link>
               </div>
             ) : (
               <form className="space-y-6" onSubmit={handleSubmit}>
