@@ -2,7 +2,7 @@
 
 import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 
 export async function updateGuideProfile(data: {
   university: string;
@@ -26,6 +26,8 @@ export async function updateGuideProfile(data: {
 
     revalidatePath('/dashboard/guide/settings');
     revalidatePath('/dashboard/guide');
+    revalidateTag('guides_all');
+    revalidateTag(`guide_${session.user.id}`);
     return { success: true };
   } catch (error) {
     console.error('Failed to update guide profile:', error);
@@ -47,6 +49,8 @@ export async function uploadProfilePicture(base64Image: string) {
 
     revalidatePath('/dashboard/guide/settings');
     revalidatePath('/'); // Revalidate root to refresh layout
+    revalidateTag('guides_all'); // Revalidate the guides list so new picture shows up
+    revalidateTag(`guide_${session.user.id}`); // Revalidate individual guide page
     return { success: true };
   } catch (error) {
     console.error('Failed to upload profile picture:', error);
