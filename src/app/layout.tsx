@@ -5,6 +5,7 @@ import { Providers } from "./providers";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { MobileNav } from "@/components/layout/mobile-nav";
+import { auth } from "@/auth";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -22,15 +23,17 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
+
   return (
     <html lang="en" className={`${inter.variable} ${outfit.variable}`} suppressHydrationWarning>
       <body className="min-h-screen font-body antialiased flex flex-col bg-surface">
-        <Providers>
+        <Providers session={session}>
           <Navbar />
           <main className="flex-1 flex flex-col pt-16">
             {children}
