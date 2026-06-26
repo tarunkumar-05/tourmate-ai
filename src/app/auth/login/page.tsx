@@ -1,19 +1,49 @@
 'use client';
 
-import { useState, useActionState } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { Compass, Mail, Lock, Phone } from 'lucide-react';
 import Image from 'next/image';
 import { motion } from 'motion/react';
-import { login, loginWithGoogle } from '@/actions/auth';
-
-const initialState = {
-  error: '',
-};
+import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { loginWithGoogle } from '@/actions/auth';
 
 export default function LoginPage() {
   const [authMethod, setAuthMethod] = useState<'email' | 'phone'>('email');
-  const [state, formAction, isPending] = useActionState(login, initialState);
+  const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState('');
+  const router = useRouter();
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsPending(true);
+    setError('');
+
+    const formData = new FormData(e.currentTarget);
+    const email = formData.get('email') as string;
+    const password = formData.get('password') as string;
+
+    try {
+      const res = await signIn('credentials', {
+        email,
+        password,
+        redirect: false,
+      });
+
+      if (res?.error) {
+        setError('Invalid email or password.');
+        setIsPending(false);
+      } else if (res?.ok) {
+        // Force Next.js to clear its client-side cache, then redirect
+        router.refresh();
+        router.push('/dashboard');
+      }
+    } catch (err) {
+      setError('Something went wrong. Please try again.');
+      setIsPending(false);
+    }
+  };
 
   return (
     <div className="min-h-screen flex">
@@ -88,10 +118,10 @@ export default function LoginPage() {
               </button>
             </div>
 
-            <form action={formAction} className="space-y-4">
-              {state?.error && (
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {error && (
                 <div className="p-3 bg-red-100 text-red-700 rounded-lg text-sm">
-                  {state.error}
+                  {error}
                 </div>
               )}
               {authMethod === 'email' ? (
