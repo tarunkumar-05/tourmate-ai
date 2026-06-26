@@ -27,6 +27,7 @@ export async function updateGuideProfile(data: {
     revalidatePath('/dashboard/guide/settings');
     revalidatePath('/dashboard/guide');
     revalidatePath('/guides');
+    revalidatePath(`/guides/${session.user.id}`);
     revalidateTag('guides_all');
     revalidateTag(`guide_${session.user.id}`);
     return { success: true };
@@ -51,6 +52,7 @@ export async function uploadProfilePicture(base64Image: string) {
     revalidatePath('/dashboard/guide/settings');
     revalidatePath('/'); // Revalidate root to refresh layout
     revalidatePath('/guides');
+    revalidatePath(`/guides/${session.user.id}`);
     revalidateTag('guides_all'); // Revalidate the guides list so new picture shows up
     revalidateTag(`guide_${session.user.id}`); // Revalidate individual guide page
     return { success: true };
