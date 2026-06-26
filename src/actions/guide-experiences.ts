@@ -68,6 +68,7 @@ export async function createExperience(data: {
   category: DestinationCategory;
   destinationId?: string;
   meetingPoint?: string;
+  coverImage?: string;
 }) {
   const session = await auth();
   if (!session?.user?.id) return { success: false, error: 'Unauthorized' };
@@ -87,6 +88,7 @@ export async function createExperience(data: {
         category: data.category,
         destinationId: data.destinationId || null,
         meetingPoint: data.meetingPoint,
+        coverImage: data.coverImage || null,
         status: 'PUBLISHED',
       }
     });
