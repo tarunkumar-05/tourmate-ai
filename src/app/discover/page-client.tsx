@@ -17,9 +17,12 @@ export default function DiscoverClient({ initialDestinations }: { initialDestina
   const categories: (DestinationCategory | 'all')[] = ['all', 'hidden_gem', 'heritage', 'eco', 'village', 'food', 'adventure', 'religious', 'cultural', 'family'];
 
   const filteredDestinations = initialDestinations.filter(dest => {
-    const matchesCategory = activeCategory === 'all' || dest.categories.includes(activeCategory as DestinationCategory);
+    const destCategories = (dest.categories || []).map((c: string) => c.toLowerCase());
+    const matchesCategory = activeCategory === 'all' || destCategories.includes(activeCategory as string);
     const matchesSearch = dest.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          dest.city.toLowerCase().includes(searchQuery.toLowerCase());
+                          dest.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          dest.state?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          dest.tags?.some((t: string) => t.toLowerCase().includes(searchQuery.toLowerCase()));
     return matchesCategory && matchesSearch;
   });
 
