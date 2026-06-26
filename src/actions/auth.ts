@@ -108,7 +108,7 @@ export async function requestPasswordReset(email: string) {
 
     // Send real email using Resend
     if (process.env.RESEND_API_KEY) {
-      await resend.emails.send({
+      const { data, error } = await resend.emails.send({
         from: 'onboarding@resend.dev', // Default testing domain for free tier
         to: email, // Note: On free tier without verified domain, this only sends to your Resend account email!
         subject: 'Reset your TourMate AI password',
@@ -127,8 +127,14 @@ export async function requestPasswordReset(email: string) {
           </div>
         `
       });
+
+      if (error) {
+        console.error('Resend API Error:', error);
+        return { success: false, error: `Email failed to send: ${error.message}` };
+      }
     } else {
       console.warn('RESEND_API_KEY is not set. Email not sent. Reset link:', resetLink);
+      return { success: false, error: 'Server configuration error: Email service is not set up.' };
     }
 
     return { success: true };
